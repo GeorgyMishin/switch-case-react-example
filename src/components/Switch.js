@@ -6,19 +6,16 @@ class Switch extends React.Component {
     const { children, renderAllEquals = false } = this.props;
 
     const currentChildren = React.Children.toArray(children);
+    const currentChildrenWithValue = currentChildren.filter(this._finder);
 
-    const defaultChild = currentChildren.find(child => child.props.default);
+    const defaultChild =
+      currentChildren.find(child => child.props.default) || null;
 
-    if (!renderAllEquals) {
-      const renderItem = currentChildren.find(this._finder) || defaultChild;
-      return renderItem;
-    } else if (renderAllEquals) {
-      const renderItems = currentChildren.filter(this._finder);
-
-      return renderItems.length ? renderItems : defaultChild;
-    } else {
-      return null;
-    }
+    return renderAllEquals
+      ? currentChildrenWithValue.length
+        ? currentChildrenWithValue
+        : defaultChild
+      : currentChildren.find(this._finder) || defaultChild;
   }
 
   _finder = child => {
@@ -30,8 +27,6 @@ class Switch extends React.Component {
         : child.props.value === value) && child.type === Case
     );
   };
-
-  _defaultFinder = child => {};
 }
 
 export default Switch;
